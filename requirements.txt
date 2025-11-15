@@ -1,0 +1,6 @@
+# Dependências Python para desenvolvimento local
+# Nota: boto3 já está incluído no runtime Python da AWS Lambda
+# Este arquivo é útil para testes locais
+
+boto3>=1.28.0
+

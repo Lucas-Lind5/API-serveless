@@ -1,0 +1,9 @@
+# Exemplo de arquivo de variáveis Terraform
+# Copie este arquivo para terraform.tfvars e ajuste os valores conforme necessário
+
+aws_region   = "us-east-1"
+project_name = "serverless-todo-api"
+table_name   = "todo-items"
+environment  = "dev"
+stage_name   = "v1"
+
