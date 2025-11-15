@@ -1,4 +1,3 @@
-<div align="center">
 
 # 🚀 API Serverless - Todo List
 
@@ -497,9 +496,8 @@ Este projeto demonstra os seguintes conceitos de Cloud Native e Serverless:
 
 ---
 
-<div align="center">
 
-</div>
 
-#   A P I - s e r v e l e s s  
+#   A P I - s e r v e l e s s 
+ 
  
