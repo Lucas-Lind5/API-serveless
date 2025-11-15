@@ -373,7 +373,6 @@ terraform destroy
 - [ ] Otimizar queries DynamoDB
 - [ ] CDN com CloudFront
 
-
 ---
 
 <div align="center">
