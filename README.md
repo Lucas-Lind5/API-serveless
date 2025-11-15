@@ -377,12 +377,9 @@ terraform destroy
 
 <div align="center">
 
-**Desenvolvido com ❤️ usando AWS Serverless**
-
 [![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)](https://www.terraform.io/)
 
-⭐ **Se este projeto foi útil, considere dar uma estrela!**
 
 </div>
