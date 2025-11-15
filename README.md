@@ -1,115 +1,84 @@
-<div align="center">
-
 # 🚀 API Serverless - Todo List
 
-**Projeto Cloud Native demonstrando arquitetura serverless moderna na AWS**
+> **Projeto Cloud Native demonstrando arquitetura serverless moderna na AWS**
 
-[![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
-[![Serverless](https://img.shields.io/badge/Serverless-FD5750?style=for-the-badge&logo=serverless&logoColor=white)](https://www.serverless.com/)
-
+[![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
-[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?style=flat-square&logo=aws-lambda&logoColor=white)](https://aws.amazon.com/lambda/)
-[![DynamoDB](https://img.shields.io/badge/AWS-DynamoDB-4053D6?style=flat-square&logo=amazon-dynamodb&logoColor=white)](https://aws.amazon.com/dynamodb/)
-
-</div>
 
 ---
 
 ## 📋 Sobre o Projeto
 
-Este é um projeto **Cloud Native** que demonstra uma arquitetura serverless moderna na AWS. Uma API REST completa para gerenciamento de tarefas (To-Do List) que **paga apenas pelo uso** e **não requer gerenciamento de servidores**.
+API REST completa para gerenciamento de tarefas (To-Do List) construída com arquitetura serverless na AWS. Este projeto **paga apenas pelo uso** e **não requer gerenciamento de servidores**.
 
-### 🎯 Tecnologias Utilizadas
+### 🎯 Stack Tecnológico
 
 | Categoria | Tecnologia | Descrição |
 |-----------|------------|-----------|
-| 🖥️ **Compute** | AWS Lambda | Funções serverless em Python 3.11 com Boto3 |
-| 💾 **Database** | Amazon DynamoDB | Banco NoSQL com modo pay-per-request |
-| 🌐 **API** | API Gateway | HTTP API como porta de entrada |
-| 🏗️ **IaC** | Terraform | Infraestrutura como código |
+| **Compute** | AWS Lambda | Funções serverless em Python 3.11 com Boto3 |
+| **Database** | Amazon DynamoDB | Banco NoSQL com modo pay-per-request |
+| **API** | API Gateway | HTTP API como porta de entrada |
+| **IaC** | Terraform | Infraestrutura como código |
 
 ## 🏗️ Arquitetura
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                  🌐 API Gateway (HTTP API)              │
-└───────────────────────┬─────────────────────────────────┘
-                        │
-        ┌───────────────┼───────────────┐
-        │               │               │
-   ┌────▼────┐    ┌────▼────┐    ┌────▼────┐
-   │  POST   │    │   GET   │    │   PUT   │
-   │ /items  │    │ /items  │    │/items/id│
-   └────┬────┘    └────┬────┘    └────┬────┘
-        │              │               │
-   ┌────▼────┐    ┌────▼────┐    ┌────▼────┐
-   │ CREATE  │    │   GET   │    │  UPDATE │
-   │  ITEM   │    │  ITEMS  │    │   ITEM  │
-   └────┬────┘    └────┬────┘    └────┬────┘
-        │              │               │
-        └──────────────┼───────────────┘
-                       │
-              ┌────────▼────────┐
-              │   🐍 AWS Lambda │
-              │  (Python 3.11)  │
-              └────────┬────────┘
-                       │
-              ┌────────▼────────┐
-              │  💾 DynamoDB     │
-              │  (NoSQL Table)   │
-              └──────────────────┘
+Cliente
+  │
+  ▼
+API Gateway (HTTP API)
+  │
+  ├── POST /items      → Lambda (create_item)
+  ├── GET /items       → Lambda (get_items)
+  ├── PUT /items/{id}  → Lambda (update_item)
+  └── DELETE /items/{id} → Lambda (delete_item)
+          │
+          ▼
+      DynamoDB (todo-items)
 ```
 
-### 📊 Fluxo de Requisição
+### Fluxo de Requisição
 
-1. **Cliente** → Faz requisição HTTP para API Gateway
-2. **API Gateway** → Roteia para a função Lambda apropriada
-3. **Lambda** → Processa a requisição e interage com DynamoDB
-4. **DynamoDB** → Armazena/recupera dados
-5. **Resposta** → Retorna ao cliente via API Gateway
+1. Cliente faz requisição HTTP para API Gateway
+2. API Gateway roteia para a função Lambda apropriada
+3. Lambda processa a requisição e interage com DynamoDB
+4. DynamoDB armazena/recupera dados
+5. Resposta retorna ao cliente via API Gateway
 
 ## 📁 Estrutura do Projeto
 
 ```
 API serverless/
-│
-├── 📂 lambda/                    # Funções Lambda
-│   ├── create_item.py           # ✨ POST - Criar novo item
-│   ├── get_items.py             # 📖 GET - Listar/buscar itens
-│   ├── update_item.py           # 🔄 PUT - Atualizar item
-│   └── delete_item.py           # 🗑️ DELETE - Deletar item
-│
-├── 📂 terraform/                 # Infraestrutura como Código
-│   ├── main.tf                  # 🏗️ Recursos principais
-│   ├── variables.tf             # ⚙️ Variáveis configuráveis
-│   ├── outputs.tf               # 📤 Outputs (URLs, ARNs, etc.)
-│   ├── terraform.tfvars.example # 📝 Exemplo de configuração
-│   └── .gitignore              # 🚫 Arquivos ignorados
-│
-├── 📂 examples/                  # Exemplos e scripts de teste
-│   ├── test_api.sh             # 🧪 Script Bash para testes
-│   └── test_api.ps1            # 🧪 Script PowerShell para testes
-│
-├── requirements.txt              # 📦 Dependências Python
-├── .gitignore                   # 🚫 Arquivos ignorados
-└── README.md                    # 📚 Este arquivo
+├── lambda/                    # Funções Lambda
+│   ├── create_item.py        # POST - Criar novo item
+│   ├── get_items.py          # GET - Listar/buscar itens
+│   ├── update_item.py        # PUT - Atualizar item
+│   └── delete_item.py        # DELETE - Deletar item
+├── terraform/                 # Infraestrutura como Código
+│   ├── main.tf               # Recursos principais
+│   ├── variables.tf          # Variáveis configuráveis
+│   ├── outputs.tf             # Outputs (URLs, ARNs, etc.)
+│   └── terraform.tfvars.example
+├── examples/                  # Exemplos e scripts de teste
+│   ├── test_api.sh
+│   └── test_api.ps1
+├── requirements.txt
+└── README.md
 ```
 
 ## 🚀 Guia de Início Rápido
 
 ### 📋 Pré-requisitos
 
-Antes de começar, certifique-se de ter instalado:
+| Ferramenta | Versão Mínima | Link |
+|------------|---------------|------|
+| **AWS CLI** | 2.x | [Instalar](https://aws.amazon.com/cli/) |
+| **Terraform** | >= 1.0 | [Instalar](https://www.terraform.io/downloads) |
+| **Python** | 3.11+ | [Instalar](https://www.python.org/downloads/) |
 
-| Ferramenta | Versão Mínima | Como Instalar |
-|------------|---------------|---------------|
-| **AWS CLI** | 2.x | [Instalar AWS CLI](https://aws.amazon.com/cli/) |
-| **Terraform** | >= 1.0 | [Instalar Terraform](https://www.terraform.io/downloads) |
-| **Python** | 3.11+ | [Instalar Python](https://www.python.org/downloads/) |
-
-#### ⚙️ Configuração Inicial
+### ⚙️ Configuração Inicial
 
 1. **Configure suas credenciais AWS:**
    ```bash
@@ -127,50 +96,45 @@ Antes de começar, certifique-se de ter instalado:
 
 ### 🚀 Deploy da Infraestrutura
 
-Siga estes passos para fazer o deploy completo da aplicação:
+1. **Navegue até o diretório terraform:**
+   ```bash
+   cd terraform
+   ```
 
-#### 1️⃣ Clone e Navegue até o Projeto
-```bash
-cd "API serverless/terraform"
-```
+2. **Configure as variáveis (opcional):**
+   ```bash
+   cp terraform.tfvars.example terraform.tfvars
+   # Edite terraform.tfvars com seus valores
+   ```
 
-#### 2️⃣ Configure as Variáveis (Opcional)
-Copie o arquivo de exemplo e ajuste conforme necessário:
-```bash
-cp terraform.tfvars.example terraform.tfvars
-# Edite terraform.tfvars com seus valores
-```
+3. **Inicialize o Terraform:**
+   ```bash
+   terraform init
+   ```
 
-#### 3️⃣ Inicialize o Terraform
-```bash
-terraform init
-```
-Este comando baixa os providers necessários (AWS).
+4. **Revise o plano de execução:**
+   ```bash
+   terraform plan
+   ```
 
-#### 4️⃣ Revise o Plano de Execução
-```bash
-terraform plan
-```
-Revise os recursos que serão criados antes de aplicar.
+5. **Aplique a infraestrutura:**
+   ```bash
+   terraform apply
+   ```
+   Digite `yes` quando solicitado.
 
-#### 5️⃣ Aplique a Infraestrutura
-```bash
-terraform apply
-```
-Digite `yes` quando solicitado para confirmar.
+6. **Anote a URL da API:**
+   Após o deploy, você verá:
+   ```
+   api_gateway_stage_url = "https://xxxxx.execute-api.us-east-1.amazonaws.com/v1"
+   ```
+   **Guarde esta URL!**
 
-#### 6️⃣ Anote a URL da API
-Após o deploy bem-sucedido, você verá algo como:
-```
-✅ api_gateway_stage_url = "https://xxxxx.execute-api.us-east-1.amazonaws.com/v1"
-```
-**Guarde esta URL!** Você precisará dela para testar a API.
-
-### 🧪 Testando a API
+## 🧪 Testando a API
 
 Substitua `YOUR_API_URL` pela URL obtida no output do Terraform.
 
-#### 1️⃣ Criar um Novo Item (POST)
+### 1. Criar um Novo Item (POST)
 
 **Requisição:**
 ```bash
@@ -198,54 +162,20 @@ curl -X POST https://YOUR_API_URL/v1/items \
 }
 ```
 
-#### 2️⃣ Listar Todos os Itens (GET)
+### 2. Listar Todos os Itens (GET)
 
-**Requisição:**
 ```bash
 curl https://YOUR_API_URL/v1/items
 ```
 
-**Resposta (200 OK):**
-```json
-{
-  "count": 2,
-  "items": [
-    {
-      "id": "item_2024-01-15T10-30-00",
-      "title": "Minha primeira tarefa",
-      "description": "Descrição da tarefa",
-      "completed": false,
-      "created_at": "2024-01-15T10:30:00",
-      "updated_at": "2024-01-15T10:30:00"
-    }
-  ]
-}
-```
+### 3. Buscar Item Específico (GET)
 
-#### 3️⃣ Buscar Item Específico (GET)
-
-**Requisição:**
 ```bash
 curl "https://YOUR_API_URL/v1/items?id=item_2024-01-15T10-30-00"
 ```
 
-**Resposta (200 OK):**
-```json
-{
-  "item": {
-    "id": "item_2024-01-15T10-30-00",
-    "title": "Minha primeira tarefa",
-    "description": "Descrição da tarefa",
-    "completed": false,
-    "created_at": "2024-01-15T10:30:00",
-    "updated_at": "2024-01-15T10:30:00"
-  }
-}
-```
+### 4. Atualizar Item (PUT)
 
-#### 4️⃣ Atualizar Item (PUT)
-
-**Requisição:**
 ```bash
 curl -X PUT https://YOUR_API_URL/v1/items/item_2024-01-15T10-30-00 \
   -H "Content-Type: application/json" \
@@ -255,34 +185,10 @@ curl -X PUT https://YOUR_API_URL/v1/items/item_2024-01-15T10-30-00 \
   }'
 ```
 
-**Resposta (200 OK):**
-```json
-{
-  "message": "Item atualizado com sucesso",
-  "item": {
-    "id": "item_2024-01-15T10-30-00",
-    "title": "Tarefa atualizada",
-    "description": "Descrição da tarefa",
-    "completed": true,
-    "created_at": "2024-01-15T10:30:00",
-    "updated_at": "2024-01-15T10:35:00"
-  }
-}
-```
+### 5. Deletar Item (DELETE)
 
-#### 5️⃣ Deletar Item (DELETE)
-
-**Requisição:**
 ```bash
 curl -X DELETE https://YOUR_API_URL/v1/items/item_2024-01-15T10-30-00
-```
-
-**Resposta (200 OK):**
-```json
-{
-  "message": "Item deletado com sucesso",
-  "id": "item_2024-01-15T10-30-00"
-}
 ```
 
 > 💡 **Dica:** Use os scripts de teste em `examples/` para testar todos os endpoints de uma vez!
@@ -299,60 +205,42 @@ curl -X DELETE https://YOUR_API_URL/v1/items/item_2024-01-15T10-30-00
 | `PUT` | `/items/{id}` | Atualiza um item existente | `200 OK` |
 | `DELETE` | `/items/{id}` | Deleta um item | `200 OK` |
 
-### 📋 Modelo de Dados
+### Modelo de Dados
 
-#### Item (Todo)
 ```json
 {
-  "id": "string",              // ID único do item (gerado automaticamente)
+  "id": "string",              // ID único (gerado automaticamente)
   "title": "string",           // Título da tarefa (obrigatório)
-  "description": "string",     // Descrição da tarefa (opcional)
+  "description": "string",     // Descrição (opcional)
   "completed": boolean,        // Status de conclusão (padrão: false)
   "created_at": "string",      // Data de criação (ISO 8601)
-  "updated_at": "string"       // Data de última atualização (ISO 8601)
+  "updated_at": "string"       // Data de atualização (ISO 8601)
 }
 ```
 
-### 🔍 Códigos de Status HTTP
+### Códigos de Status HTTP
 
 | Código | Significado | Quando Ocorre |
 |--------|-------------|---------------|
 | `200` | OK | Requisição bem-sucedida |
 | `201` | Created | Item criado com sucesso |
-| `400` | Bad Request | Dados inválidos na requisição |
+| `400` | Bad Request | Dados inválidos |
 | `404` | Not Found | Item não encontrado |
 | `500` | Internal Server Error | Erro no servidor |
 
 ## ⚙️ Configuração
 
-### 🔧 Variáveis do Terraform
+### Variáveis do Terraform
 
-O projeto utiliza variáveis configuráveis para facilitar a customização. Você pode:
-
-1. **Editar diretamente** `terraform/variables.tf`
-2. **Criar um arquivo** `terraform/terraform.tfvars` (recomendado)
-3. **Usar variáveis de ambiente** do Terraform
-
-#### Exemplo de `terraform.tfvars`:
+Crie um arquivo `terraform/terraform.tfvars`:
 
 ```hcl
-# Região AWS onde os recursos serão criados
-aws_region = "us-east-1"
-
-# Nome do projeto (usado como prefixo para recursos)
+aws_region   = "us-east-1"
 project_name = "serverless-todo-api"
-
-# Nome da tabela DynamoDB
-table_name = "todo-items"
-
-# Ambiente (dev, staging, prod)
-environment = "dev"
-
-# Nome do stage do API Gateway
-stage_name = "v1"
+table_name   = "todo-items"
+environment  = "dev"
+stage_name   = "v1"
 ```
-
-#### Variáveis Disponíveis:
 
 | Variável | Tipo | Padrão | Descrição |
 |----------|------|--------|-----------|
@@ -364,142 +252,138 @@ stage_name = "v1"
 
 ## 💰 Análise de Custos
 
-Este projeto utiliza recursos serverless com modelo **pay-per-use**, o que significa que você paga apenas pelo que usar!
+Este projeto utiliza recursos serverless com modelo **pay-per-use**.
 
-### 📊 Free Tier (Camada Gratuita)
+### Free Tier (Camada Gratuita)
 
 | Serviço | Free Tier | Após Free Tier |
 |---------|-----------|----------------|
-| **AWS Lambda** | 1M requisições/mês<br>400,000 GB-segundos | $0.20 por 1M requisições<br>$0.0000166667 por GB-segundo |
-| **DynamoDB** | 25 GB de armazenamento<br>25 unidades de capacidade de escrita<br>25 unidades de capacidade de leitura | $0.25 por GB<br>$1.25 por milhão de escritas<br>$0.25 por milhão de leituras |
+| **AWS Lambda** | 1M requisições/mês<br>400,000 GB-segundos | $0.20 por 1M requisições |
+| **DynamoDB** | 25 GB de armazenamento<br>25 unidades de capacidade | $0.25 por GB |
 | **API Gateway** | 1M requisições/mês | $1.00 por 1M requisições |
 
-### 💡 Estimativa de Custos
+### Estimativa de Custos
 
-Para uso pessoal/desenvolvimento com tráfego baixo:
-- **Custo mensal estimado: $0.00 - $1.00** 🎉
-- Para projetos pequenos/médios: **$1.00 - $5.00/mês**
-- Para produção com alto tráfego: Consulte a [calculadora AWS](https://calculator.aws/)
+- **Uso pessoal/desenvolvimento:** $0.00 - $1.00/mês 🎉
+- **Projetos pequenos/médios:** $1.00 - $5.00/mês
+- **Produção com alto tráfego:** Consulte a [calculadora AWS](https://calculator.aws/)
 
 > ⚠️ **Importante:** Sempre monitore seus custos no AWS Cost Explorer!
 
 ## 🧹 Limpeza e Remoção
 
-Para remover todos os recursos criados na AWS e evitar custos:
+Para remover todos os recursos criados:
 
 ```bash
 cd terraform
 terraform destroy
 ```
 
-> ⚠️ **Atenção:** Este comando irá **deletar permanentemente** todos os recursos criados, incluindo:
-> - Tabela DynamoDB e todos os dados
-> - Funções Lambda
-> - API Gateway
-> - IAM Roles e Policies
->
-> Certifique-se de fazer backup dos dados importantes antes de executar!
+> ⚠️ **Atenção:** Este comando irá deletar permanentemente todos os recursos, incluindo dados no DynamoDB!
 
-### 🗑️ Remoção Manual (Alternativa)
+### Remoção Manual (Alternativa)
 
-Se preferir remover recursos manualmente via AWS Console:
 1. **DynamoDB** → Delete table `todo-items`
 2. **Lambda** → Delete todas as funções `serverless-todo-api-*`
 3. **API Gateway** → Delete API `serverless-todo-api-api`
 4. **IAM** → Delete role `serverless-todo-api-lambda-role`
 
-## 📚 Conceitos e Tecnologias Demonstradas
+## 📚 Conceitos Demonstrados
 
-Este projeto demonstra os seguintes conceitos de Cloud Native e Serverless:
+### Arquitetura
+- ✅ Arquitetura Serverless - Sem gerenciamento de servidores
+- ✅ Microserviços - Funções Lambda independentes
+- ✅ API RESTful - Padrões REST para comunicação
 
-### 🏗️ Arquitetura
-- ✅ **Arquitetura Serverless** - Sem gerenciamento de servidores
-- ✅ **Microserviços** - Funções Lambda independentes
-- ✅ **API RESTful** - Padrões REST para comunicação
+### DevOps & IaC
+- ✅ Infrastructure as Code - Terraform
+- ✅ Versionamento de Infraestrutura
+- ✅ Automação de Deploy
 
-### 🛠️ DevOps & IaC
-- ✅ **Infrastructure as Code** - Terraform para gerenciar infraestrutura
-- ✅ **Versionamento de Infraestrutura** - Controle de versão da infra
-- ✅ **Automação** - Deploy automatizado
+### AWS Services
+- ✅ AWS Lambda - Computação serverless
+- ✅ Amazon DynamoDB - Banco NoSQL gerenciado
+- ✅ API Gateway - Gerenciamento de APIs
+- ✅ IAM - Gerenciamento de acesso e permissões
 
-### ☁️ AWS Services
-- ✅ **AWS Lambda** - Computação serverless
-- ✅ **Amazon DynamoDB** - Banco NoSQL gerenciado
-- ✅ **API Gateway** - Gerenciamento de APIs
-- ✅ **IAM** - Gerenciamento de acesso e permissões
-
-### 🔒 Segurança & Boas Práticas
-- ✅ **IAM Roles e Policies** - Princípio do menor privilégio
-- ✅ **CORS Configuration** - Controle de acesso cross-origin
-- ✅ **Environment Variables** - Configuração segura
-- ✅ **Error Handling** - Tratamento robusto de erros
-- ✅ **Validação de Entrada** - Validação de dados
+### Segurança & Boas Práticas
+- ✅ IAM Roles e Policies - Princípio do menor privilégio
+- ✅ CORS Configuration
+- ✅ Environment Variables
+- ✅ Error Handling
+- ✅ Validação de Entrada
 
 ## 🔒 Segurança
 
-### ✅ Medidas de Segurança Implementadas
+### Medidas Implementadas
 
-- **🔐 IAM Roles** - Permissões mínimas necessárias (princípio do menor privilégio)
-- **🌐 CORS** - Configurado para permitir requisições cross-origin (ajuste para produção)
-- **✅ Validação de Entrada** - Validação de dados nas funções Lambda
-- **🔑 Environment Variables** - Configurações sensíveis via variáveis de ambiente
-- **📝 Logging** - CloudWatch Logs para auditoria
+- **IAM Roles** - Permissões mínimas necessárias
+- **CORS** - Configurado (ajuste para produção)
+- **Validação de Entrada** - Validação de dados nas funções Lambda
+- **Environment Variables** - Configurações via variáveis de ambiente
+- **Logging** - CloudWatch Logs para auditoria
 
-### ⚠️ Recomendações para Produção
+### Recomendações para Produção
 
 - [ ] Implementar autenticação/autorização (AWS Cognito)
 - [ ] Restringir CORS para domínios específicos
 - [ ] Adicionar rate limiting no API Gateway
-- [ ] Habilitar AWS WAF para proteção adicional
-- [ ] Usar AWS Secrets Manager para credenciais
-- [ ] Implementar VPC para isolamento de rede
-- [ ] Habilitar CloudTrail para auditoria
-- [ ] Configurar alertas de custo no AWS Budgets
+- [ ] Habilitar AWS WAF
+- [ ] Usar AWS Secrets Manager
+- [ ] Implementar VPC para isolamento
+- [ ] Habilitar CloudTrail
+- [ ] Configurar alertas de custo
 
-## 🚀 Próximos Passos e Melhorias
+## 🚀 Próximos Passos
 
-### 🔐 Segurança
-- [ ] Adicionar autenticação/autorização com AWS Cognito
-- [ ] Implementar rate limiting no API Gateway
-- [ ] Adicionar AWS WAF para proteção adicional
-- [ ] Implementar validação de tokens JWT
+### Segurança
+- [ ] Adicionar autenticação com AWS Cognito
+- [ ] Implementar rate limiting
+- [ ] Adicionar AWS WAF
+- [ ] Validação de tokens JWT
 
-### 📊 Monitoramento e Observabilidade
-- [ ] Configurar CloudWatch Dashboards
-- [ ] Adicionar CloudWatch Logs Insights queries
-- [ ] Implementar alertas e notificações
-- [ ] Adicionar AWS X-Ray para tracing distribuído
+### Monitoramento
+- [ ] CloudWatch Dashboards
+- [ ] CloudWatch Logs Insights
+- [ ] Alertas e notificações
+- [ ] AWS X-Ray para tracing
 
-### 🧪 Testes e Qualidade
-- [ ] Adicionar testes unitários (pytest)
-- [ ] Implementar testes de integração
-- [ ] Configurar linting (pylint, flake8)
-- [ ] Adicionar code coverage
+### Testes
+- [ ] Testes unitários (pytest)
+- [ ] Testes de integração
+- [ ] Linting (pylint, flake8)
+- [ ] Code coverage
 
-### 🔄 CI/CD
-- [ ] Configurar GitHub Actions para CI/CD
-- [ ] Implementar pipeline de deploy automatizado
-- [ ] Adicionar testes automatizados no pipeline
-- [ ] Configurar ambientes (dev, staging, prod)
+### CI/CD
+- [ ] GitHub Actions
+- [ ] Pipeline de deploy automatizado
+- [ ] Testes automatizados
+- [ ] Ambientes (dev, staging, prod)
 
-### 🎯 Funcionalidades
-- [ ] Implementar paginação para listagem de itens
-- [ ] Adicionar filtros e busca avançada
-- [ ] Implementar versionamento de API
-- [ ] Adicionar suporte a múltiplos usuários
-- [ ] Implementar soft delete (marcar como deletado)
+### Funcionalidades
+- [ ] Paginação para listagem
+- [ ] Filtros e busca avançada
+- [ ] Versionamento de API
+- [ ] Suporte a múltiplos usuários
+- [ ] Soft delete
 
-### 📈 Performance
-- [ ] Adicionar cache com ElastiCache
-- [ ] Implementar connection pooling
+### Performance
+- [ ] Cache com ElastiCache
+- [ ] Connection pooling
 - [ ] Otimizar queries DynamoDB
-- [ ] Adicionar CDN com CloudFront
+- [ ] CDN com CloudFront
+
 
 ---
 
 <div align="center">
 
-</div>
+**Desenvolvido com ❤️ usando AWS Serverless**
 
-#   A P I - s e r v e l e s s  
- 
+[![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)](https://www.terraform.io/)
+
+⭐ **Se este projeto foi útil, considere dar uma estrela!**
+
+</div>
